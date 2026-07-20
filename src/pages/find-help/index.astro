@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import { site } from '../../lib/site';
+---
+
+<BaseLayout
+  title="Find Help"
+  description={`What ${site.title} can help with, ward surgery details, and how to submit a casework enquiry.`}
+>
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow">Find Help / Casework</p>
+      <h1>What can a councillor help with?</h1>
+      <p class="intro">
+        As your local councillor, I can raise concerns with {site.council}, chase up
+        stuck cases, and point you toward the right support — from repairs and benefits
+        to planning and anti-social behaviour. Here's what I can help with, and how to get in touch.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="grid">
+        {site.helpCategories.map((cat) => (
+          <div class="card" id={cat.slug}>
+            <h3>{cat.title}</h3>
+            <p>{cat.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight surgery">
+    <div class="container">
+      <div class="card surgery__card">
+        <p class="eyebrow">Ward surgery</p>
+        <h2>Drop in and speak to me directly</h2>
+        <p><strong>When:</strong> {site.surgery.schedule}</p>
+        <p><strong>Where:</strong> {site.surgery.location}</p>
+        <p>{site.surgery.note}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow">Casework enquiry</p>
+      <h2>Tell me what's going on</h2>
+      <p class="intro">Fill in the form below and I'll get back to you as soon as I can.</p>
+      <ContactForm variant="casework" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro { max-width: 60ch; color: var(--color-text-muted); font-size: 1.05rem; }
+  .surgery__card { max-width: 640px; }
+</style>

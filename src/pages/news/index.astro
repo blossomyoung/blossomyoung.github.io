@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsCard from '../../components/NewsCard.astro';
+import { site } from '../../lib/site';
+import { getCollection } from 'astro:content';
+
+const allNews = (await getCollection('news', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const categories = ['All', ...new Set(allNews.map((p) => p.data.category))];
+---
+
+<BaseLayout title="News" description={`Local news and updates from ${site.title}.`}>
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow">News / Updates</p>
+      <h1>What's happening in {site.ward}</h1>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      {allNews.length > 0 && (
+        <div class="filters" role="tablist" aria-label="Filter news by category">
+          {categories.map((cat, i) => (
+            <button
+              class="filter-btn"
+              class:list={[{ 'is-active': i === 0 }]}
+              data-category={cat}
+              type="button"
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {allNews.length > 0 ? (
+        <div class="grid" id="news-grid" class:list={[{ 'grid-sparse': allNews.length < 3 }]}>
+          {allNews.map((post) => (
+            <div class="news-item" data-category={post.data.category}>
+              <NewsCard
+                slug={post.id}
+                title={post.data.title}
+                date={post.data.date}
+                category={post.data.category}
+                excerpt={post.data.excerpt}
+                imageAlt={post.data.imageAlt}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="news-empty">No news posted yet — check back soon.</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+  .filter-btn {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+  .filter-btn.is-active,
+  .filter-btn:hover {
+    background: var(--color-ink);
+    color: #fff;
+    border-color: var(--color-ink);
+  }
+  .news-empty { color: var(--color-text-muted); }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const items = document.querySelectorAll<HTMLElement>('.news-item');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const category = btn.dataset.category;
+      items.forEach((item) => {
+        const show = category === 'All' || item.dataset.category === category;
+        item.style.display = show ? '' : 'none';
+      });
+    });
+  });
+</script>

@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Thank you" description="Thanks for getting in touch." noindex>
+  <section class="section thanks">
+    <div class="container">
+      <p class="eyebrow">Thank you</p>
+      <h1>Message received</h1>
+      <p>Thanks for getting in touch — I'll aim to get back to you as soon as possible.</p>
+      <a class="btn btn--primary" href="/">Back to home</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .thanks { text-align: center; padding: 6rem 0; }
+  .thanks p { max-width: 46ch; margin: 0 auto 1.5rem; color: var(--color-text-muted); }
+</style>

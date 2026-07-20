@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PlaceholderPhoto from '../../components/PlaceholderPhoto.astro';
+import { site } from '../../lib/site';
+
+// TODO: replace with real bio copy once confirmed by the client
+const bioIntro = `I'm ${site.title}, proud to represent ${site.ward} on ${site.council}. [TODO: short biography — background, why she stood for council, what drives her.]`;
+
+// TODO: replace with real priorities once confirmed
+const priorities = [
+  { title: 'Housing', body: '[TODO: priority copy]' },
+  { title: 'Safer streets', body: '[TODO: priority copy]' },
+  { title: 'Local services', body: '[TODO: priority copy]' },
+];
+
+// TODO: replace with real journey milestones, newest first
+const journey = [
+  { year: '[TODO]', text: 'Elected councillor for Beckton, Newham Council.' },
+  { year: '[TODO]', text: '[TODO: earlier milestone]' },
+];
+---
+
+<BaseLayout title="About" description={`Meet ${site.title}, your local councillor for ${site.ward}.`}>
+  <section class="section section--tight about-intro">
+    <div class="container about-intro__grid">
+      <div class="about-intro__photo">
+        <PlaceholderPhoto label="About photo of Blossom Young" tone="ink" ratio="4 / 5" />
+      </div>
+      <div>
+        <p class="eyebrow">About</p>
+        <h1>{site.title}</h1>
+        <p class="about-intro__bio">{bioIntro}</p>
+        {site.councilProfileUrl && (
+          <a class="btn btn--secondary" href={site.councilProfileUrl} target="_blank" rel="noopener noreferrer">
+            View official council profile
+          </a>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow">Priorities</p>
+      <h2>What I'm focused on for {site.ward}</h2>
+      <div class="grid">
+        {priorities.map((p) => (
+          <div class="card">
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow">How I got here</p>
+      <h2>My journey</h2>
+      <ol class="timeline">
+        {journey.map((item) => (
+          <li>
+            <span class="timeline__year">{item.year}</span>
+            <span class="timeline__text">{item.text}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-intro__grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  .about-intro__photo { max-width: 320px; }
+  .about-intro__bio { font-size: 1.05rem; color: var(--color-text-muted); max-width: 60ch; }
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 3px solid var(--color-primary);
+    max-width: 640px;
+  }
+  .timeline li {
+    padding: 0 0 1.5rem 1.5rem;
+    position: relative;
+  }
+  .timeline li::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 4px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--color-primary);
+  }
+  .timeline__year {
+    display: block;
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 780px) {
+    .about-intro__grid { grid-template-columns: 1fr; }
+    .about-intro__photo { max-width: 220px; }
+  }
+</style>
