@@ -1,0 +1,107 @@
+---
+import { site } from '../lib/site';
+interface Props {
+  formspreeEndpoint?: string;
+}
+const { formspreeEndpoint } = Astro.props;
+const endpoint = formspreeEndpoint ?? site.formspree.newsletter;
+---
+
+<div class="newsletter card">
+  <div>
+    <h2>Stay in the loop</h2>
+    <p>Get occasional updates on local campaigns, casework wins, and ward news — no spam, unsubscribe any time.</p>
+  </div>
+  <form
+    class="newsletter__form"
+    method="POST"
+    action={endpoint || undefined}
+    data-formspree-endpoint={endpoint || ''}
+  >
+    <label for="newsletter-email" class="visually-hidden">Email address</label>
+    <input id="newsletter-email" name="email" type="email" placeholder="you@example.com" required autocomplete="email" />
+    <button type="submit" class="btn btn--primary">Sign up</button>
+    <p class="form-status" role="status" aria-live="polite" hidden></p>
+  </form>
+</div>
+
+<style>
+  .newsletter {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+  }
+  .newsletter h2 { margin-bottom: 0.4rem; }
+  .newsletter p { margin: 0; color: var(--color-text-muted); }
+  .newsletter__form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    position: relative;
+  }
+  .newsletter__form input {
+    flex: 1;
+    min-width: 200px;
+    font: inherit;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+  .newsletter__form input:focus {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 1px;
+  }
+  .form-status {
+    flex-basis: 100%;
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  .form-status[data-state='success'] { color: #1a7a3c; }
+  .form-status[data-state='error'] { color: var(--color-primary-dark); }
+  @media (max-width: 780px) {
+    .newsletter { grid-template-columns: 1fr; text-align: center; }
+    .newsletter__form { justify-content: center; }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.newsletter__form');
+  form?.addEventListener('submit', async (event) => {
+    const endpoint = form.dataset.formspreeEndpoint;
+    const status = form.querySelector<HTMLElement>('.form-status');
+
+    if (!endpoint) {
+      event.preventDefault();
+      if (status) {
+        status.hidden = false;
+        status.dataset.state = 'success';
+        status.textContent = "Preview mode: this form isn't connected yet.";
+        form.reset();
+      }
+      return;
+    }
+
+    event.preventDefault();
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) throw new Error('Signup failed');
+      if (status) {
+        status.hidden = false;
+        status.dataset.state = 'success';
+        status.textContent = "Thanks — you're signed up.";
+      }
+      form.reset();
+    } catch {
+      if (status) {
+        status.hidden = false;
+        status.dataset.state = 'error';
+        status.textContent = 'Something went wrong — please try again shortly.';
+      }
+    }
+  });
+</script>

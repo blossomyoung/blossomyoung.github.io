@@ -1,0 +1,56 @@
+---
+import { Icon } from 'astro-icon/components';
+import { site } from '../lib/site';
+
+interface Props {
+  variant?: 'light' | 'dark';
+}
+const { variant = 'dark' } = Astro.props;
+
+const iconMap: Record<string, string> = {
+  facebook: 'simple-icons:facebook',
+  instagram: 'simple-icons:instagram',
+  'x-twitter': 'simple-icons:x',
+  threads: 'simple-icons:threads',
+  bluesky: 'simple-icons:bluesky',
+  tiktok: 'simple-icons:tiktok',
+  substack: 'simple-icons:substack',
+  youtube: 'simple-icons:youtube',
+};
+---
+
+{site.socialLinks.length > 0 && (
+  <ul class:list={['social-bar', `social-bar--${variant}`]}>
+    {site.socialLinks.map((link) => (
+      <li>
+        <a href={link.url} target="_blank" rel="noopener noreferrer" aria-label={link.label}>
+          <Icon name={iconMap[link.platform] ?? 'simple-icons:link'} width="20" height="20" />
+        </a>
+      </li>
+    ))}
+  </ul>
+)}
+
+<style>
+  .social-bar {
+    display: flex;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .social-bar a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+  .social-bar a:hover { transform: translateY(-2px); }
+  .social-bar--dark a { background: var(--color-ink); color: #fff; }
+  .social-bar--dark a:hover { background: var(--color-primary); }
+  .social-bar--light a { background: rgba(255,255,255,0.15); color: #fff; }
+  .social-bar--light a:hover { background: rgba(255,255,255,0.3); }
+</style>

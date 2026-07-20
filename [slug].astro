@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SitePhoto from '../../components/SitePhoto.astro';
+import PlaceholderPhoto from '../../components/PlaceholderPhoto.astro';
+import { getNewsImage } from '../../lib/newsImages';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('news', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const realImage = getNewsImage(post.id);
+const formattedDate = post.data.date.toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<BaseLayout title={post.data.title} description={post.data.excerpt}>
+  <article class="section section--tight post">
+    <div class="container post__container">
+      <p class="eyebrow">{post.data.category} · {formattedDate}</p>
+      <h1>{post.data.title}</h1>
+
+      <div class="post__media">
+        {realImage
+          ? <SitePhoto image={realImage} alt={post.data.imageAlt} ratio="16 / 9" priority />
+          : <PlaceholderPhoto label={post.data.title} tone="gold" ratio="16 / 9" />}
+      </div>
+
+      <div class="post__body">
+        <Content />
+      </div>
+
+      <a class="btn btn--secondary" href="/news/">&larr; Back to news</a>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post__container { max-width: 760px; }
+  .post__media { margin: 1.5rem 0 2rem; }
+  .post__body { font-size: 1.05rem; }
+  .post__body :global(img) {
+    border-radius: var(--radius-md);
+    margin: 1.5rem 0;
+  }
+</style>

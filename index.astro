@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import NewsCard from '../components/NewsCard.astro';
+import Newsletter from '../components/Newsletter.astro';
+import { site } from '../lib/site';
+import { getCollection } from 'astro:content';
+
+const allNews = await getCollection('news', ({ data }) => !data.draft);
+const latestNews = allNews
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 6);
+---
+
+<BaseLayout
+  title={site.name}
+  description={`${site.title} — ${site.role} in ${site.council}. Get help with housing, council tax, planning, and more.`}
+>
+  <Hero
+    eyebrow={`${site.ward} Ward · ${site.council}`}
+    headline={`Working for ${site.ward}, every day.`}
+    intro={`I'm ${site.title}, your local councillor for ${site.ward}. I'm here to help with casework, listen to local concerns, and push for the things that make this ward a better place to live.`}
+    primaryCta={{ label: 'Get help', href: '/find-help/' }}
+    secondaryCta={{ label: 'Contact me', href: '/contact/' }}
+  />
+
+  <section class="section section--tight help-preview">
+    <div class="container">
+      <p class="eyebrow">How can I help?</p>
+      <h2>Support with the issues that affect you</h2>
+      <div class="grid">
+        {site.helpCategories.slice(0, 3).map((cat) => (
+          <a class="help-card card" href={`/find-help/#${cat.slug}`}>
+            <h3>{cat.title}</h3>
+            <p>{cat.description}</p>
+          </a>
+        ))}
+      </div>
+      <a class="btn btn--secondary" href="/find-help/" style="margin-top: 1.5rem;">See all ways I can help</a>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow">Latest news</p>
+      <h2>What I've been working on</h2>
+      {latestNews.length > 0 ? (
+        <div class="grid" class:list={[{ 'grid-sparse': latestNews.length < 3 }]}>
+          {latestNews.map((post) => (
+            <NewsCard
+              slug={post.id}
+              title={post.data.title}
+              date={post.data.date}
+              category={post.data.category}
+              excerpt={post.data.excerpt}
+              imageAlt={post.data.imageAlt}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="news-empty">No news posted yet — check back soon.</p>
+      )}
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <Newsletter />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .help-card {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s ease;
+  }
+  .help-card:hover { transform: translateY(-3px); }
+  .help-card h3 { color: var(--color-primary); }
+  .news-empty { color: var(--color-text-muted); }
+</style>

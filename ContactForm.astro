@@ -1,0 +1,123 @@
+---
+import { site } from '../lib/site';
+
+interface Props {
+  variant?: 'general' | 'casework';
+  formspreeEndpoint?: string;
+}
+const { variant = 'general', formspreeEndpoint } = Astro.props;
+const endpoint = formspreeEndpoint ?? (variant === 'casework' ? site.formspree.casework : site.formspree.contact);
+const formId = `${variant}-form`;
+---
+
+<form
+  id={formId}
+  class="contact-form"
+  method="POST"
+  action={endpoint || undefined}
+  data-formspree-endpoint={endpoint || ''}
+  data-fallback-email={site.email}
+>
+  <div class="field">
+    <label for={`${formId}-name`}>Full name</label>
+    <input id={`${formId}-name`} name="name" type="text" required autocomplete="name" />
+  </div>
+
+  <div class="field">
+    <label for={`${formId}-email`}>Email address</label>
+    <input id={`${formId}-email`} name="email" type="email" required autocomplete="email" />
+  </div>
+
+  {variant === 'casework' && (
+    <div class="field">
+      <label for={`${formId}-address`}>Your address</label>
+      <input id={`${formId}-address`} name="address" type="text" required autocomplete="street-address" />
+    </div>
+  )}
+
+  {variant === 'casework' && (
+    <div class="field">
+      <label for={`${formId}-issue`}>Issue type</label>
+      <select id={`${formId}-issue`} name="issue_type" required>
+        {site.helpCategories.map((cat) => <option value={cat.title}>{cat.title}</option>)}
+      </select>
+    </div>
+  )}
+
+  <div class="field">
+    <label for={`${formId}-message`}>Message</label>
+    <textarea id={`${formId}-message`} name="message" rows="5" required></textarea>
+  </div>
+
+  <button type="submit" class="btn btn--primary">Send message</button>
+
+  <p class="form-status" role="status" aria-live="polite" hidden></p>
+</form>
+
+<style>
+  .contact-form { display: flex; flex-direction: column; gap: 1.1rem; max-width: 560px; }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; }
+  label { font-weight: 600; font-size: 0.9rem; }
+  input, select, textarea {
+    font: inherit;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 1px;
+    border-color: var(--color-gold);
+  }
+  .form-status { font-size: 0.9rem; margin: 0; }
+  .form-status[data-state='success'] { color: #1a7a3c; }
+  .form-status[data-state='error'] { color: var(--color-primary-dark); }
+</style>
+
+<script>
+  const forms = document.querySelectorAll<HTMLFormElement>('.contact-form');
+
+  forms.forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      const endpoint = form.dataset.formspreeEndpoint;
+      const status = form.querySelector<HTMLElement>('.form-status');
+
+      // No endpoint configured yet — harmless local preview mode.
+      if (!endpoint) {
+        event.preventDefault();
+        if (status) {
+          status.hidden = false;
+          status.dataset.state = 'success';
+          status.textContent = "Preview mode: this form isn't connected yet. Once Formspree is set up, submissions will send for real.";
+          form.reset();
+        }
+        return;
+      }
+
+      event.preventDefault();
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (!response.ok) throw new Error('Form submission failed');
+        if (status) {
+          status.hidden = false;
+          status.dataset.state = 'success';
+          status.textContent = 'Thanks — your message has been sent.';
+        }
+        form.reset();
+      } catch {
+        if (status) {
+          status.hidden = false;
+          status.dataset.state = 'error';
+          const fallbackEmail = form.dataset.fallbackEmail || 'us';
+          status.textContent = `Something went wrong sending this. Please email ${fallbackEmail} directly instead.`;
+        }
+      }
+    });
+  });
+</script>

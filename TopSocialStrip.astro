@@ -1,0 +1,31 @@
+---
+import SocialBar from './SocialBar.astro';
+import { site } from '../lib/site';
+---
+
+{site.socialLinks.length > 0 && (
+  <div class="top-strip">
+    <div class="container top-strip__inner">
+      <span class="top-strip__text">Follow {site.name}</span>
+      <SocialBar variant="light" />
+    </div>
+  </div>
+)}
+
+<style>
+  .top-strip {
+    background: var(--color-ink);
+    color: #fff;
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
+  }
+  .top-strip__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .top-strip__text {
+    opacity: 0.85;
+  }
+</style>

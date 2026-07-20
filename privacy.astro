@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { site } from '../../lib/site';
+---
+
+<BaseLayout title="Privacy Policy" description="Privacy Policy" noindex>
+  <section class="section section--tight legal">
+    <div class="container">
+      <h1>Privacy Policy</h1>
+      <p class="updated">Last updated: [TODO: date]</p>
+
+      <h2>Who we are</h2>
+      <p>This website is operated on behalf of {site.title}, {site.role}, {site.council}.</p>
+
+      <h2>What information we collect</h2>
+      <p>
+        When you use the contact, casework enquiry, or newsletter sign-up forms on this site, we
+        collect the information you provide — typically your name, email address, and the content
+        of your message, and for casework enquiries, your postal address and the type of issue
+        you're raising. Form submissions are processed via Formspree, a third-party form service —
+        see their privacy policy at formspree.io for details of how they handle data in transit.
+      </p>
+
+      <h2>How we use it</h2>
+      <p>
+        We use the information you submit only to respond to your enquiry, follow up on casework
+        on your behalf with {site.council} or other relevant bodies, and — if you sign up for the
+        newsletter — to send occasional updates, which you can unsubscribe from at any time.
+      </p>
+
+      <h2>How long we keep it</h2>
+      <p>
+        Casework correspondence is retained for as long as necessary to resolve your enquiry and
+        for a reasonable period afterwards for reference, in line with standard councillor
+        casework retention practice. [TODO: confirm exact retention period.]
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        Under UK data protection law, you have the right to ask what personal data we hold about
+        you, to have inaccurate data corrected, and to ask for it to be deleted, subject to any
+        legal obligation to retain it. To exercise these rights, contact us at
+        <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+
+      <h2>Cookies</h2>
+      <p>See our <a href="/legal/cookies/">Cookie Policy</a> for details of cookies used on this site.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about this policy can be sent to <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal { max-width: 760px; margin: 0 auto; }
+  .legal h2 { margin-top: 2rem; }
+  .updated { color: var(--color-text-muted); font-size: 0.9rem; }
+</style>

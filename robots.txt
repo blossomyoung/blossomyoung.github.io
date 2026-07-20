@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://blossomyoung.uk/sitemap-index.xml

@@ -1,0 +1,94 @@
+---
+import SocialBar from './SocialBar.astro';
+import { site } from '../lib/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__col">
+      <p class="footer__brand">{site.title}</p>
+      <p class="footer__role">{site.role} · {site.council}</p>
+      <SocialBar variant="light" />
+    </div>
+
+    <nav class="footer__col" aria-label="Footer quick links">
+      <p class="footer__heading">Quick links</p>
+      <ul>
+        {site.nav.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <nav class="footer__col" aria-label="Legal links">
+      <p class="footer__heading">Legal</p>
+      <ul>
+        <li><a href="/legal/privacy/">Privacy Policy</a></li>
+        <li><a href="/legal/cookies/">Cookie Policy</a></li>
+        <li><a href="/legal/terms/">Terms of Use</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="footer__imprint">
+    <div class="container">
+      <p>{site.imprint}</p>
+      <p>&copy; {year} {site.name}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-ink);
+    color: rgba(255,255,255,0.85);
+    margin-top: 4rem;
+  }
+  .footer__inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    padding: 3rem 1.5rem;
+  }
+  .footer__brand {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: #fff;
+    margin: 0 0 0.15rem;
+  }
+  .footer__role {
+    font-size: 0.85rem;
+    opacity: 0.75;
+    margin: 0 0 1rem;
+  }
+  .footer__heading {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+    font-weight: 700;
+    opacity: 0.6;
+    margin: 0 0 0.75rem;
+  }
+  .footer__col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .footer__col a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .footer__col a:hover { color: var(--color-gold); }
+  .footer__imprint {
+    border-top: 1px solid rgba(255,255,255,0.12);
+    font-size: 0.75rem;
+    opacity: 0.6;
+    padding: 1.25rem 0;
+  }
+  .footer__imprint p { margin: 0 0 0.25rem; }
+</style>
